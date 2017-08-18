@@ -1,0 +1,52 @@
+****************************************************
+Lab No. 01: Deploying an Application to Google Cloud
+****************************************************
+
+The purpose of this Lab is to familiarize students with the tools available within the Google Cloud Platform.
+
+
+Account Registration
+====================
+
+
+
+Deploying a Virtual Machine
+===========================
+
+In this section you will create a virutal machine and deploy a simple service.
+
+
+1. Go to the Google Cloud Platform Console
+
+2. On the Left Navigation Bar, from the **COMPUTE** section, select Compute Engine > VM Instances
+This operation might take a minute or two the first time.
+
+3. Click Create.  This again might take a minute or two the first time.
+
+Select the following options:
+
+
+
+
+Wait for a few minutes.  Once this has completed, you should see the newly created instance on the "VM Instances" Console:
+
+
+
+Access to the Virtual Machine
+=============================
+
+
+Browser access
+--------------
+
+You can get console access through the Google Cloud Platform web interface.  Do do this select the "Open in browser window" option from the "Connect" drop down menu:
+
+.. image:: ssh-browser.png
+
+Connect to the Virtual Machine using ssh.
+
+In order to be able to connect to the Virtual machine we just created, we need to be able 
+
+https://cloud.google.com/compute/docs/instances/connecting-to-instance#standardssh
+
+
