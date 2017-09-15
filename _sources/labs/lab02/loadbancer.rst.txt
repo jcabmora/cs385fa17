@@ -1,0 +1,87 @@
+
+
+Execute the following command to run the REST API server in the background:
+
+    .. parsed-literal::
+        nohup sudo FLASK_APP=/opt/restserver/restserver.py flask run --host=0.0.0.0 --port=80 &
+
+You can now close the SSH session and the restserver will keep running in the background. Be aware that this does not mean that the REST server will autostart if you stop/start the instance.
+
+Create another instance based on the "lab02-restserver" image. Name this instance "restserver-1", and make sure that you enable HTTP/HTTPS traffic.
+
+Start the restserver in "restserver-1" in the background and make sure that it works (use the Internal IP Address for your test).
+
+At this point we have two instances running with the restserver. However, we need to add a load balancer in front of them in order to distribute the demand between the instances.
+
+We will use nginx for this purpose. Create another microinstance (TODO insert specs here), and SSH into it.  Name this instance "loadbalancer-0".
+
+SSH into "loadbalancer-0" and execute the following commands to install nginx and its software dependencies:
+
+    .. parsed-literal::
+        sudo apt-get update
+        sudo apt-get install -y nginx
+
+We now need to configure nginx to serve incoming requests to ``/fibonacci`` and forward them to the ``restserver`` nodes in a round robin fashion.
+
+We need to edit the configuration file located under: ``/etc/nginx/sites-available/default``.  
+
+Make sure that before making any changes to that file you make a backup
+
+    .. parsed-literal::
+        sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.backup
+
+Notice how this file has a json-like format.  To enable load balancing, we need to use the ``upstream`` directive.  Add this to the file
+
+    .. parsed-literal::
+		upstream fibonacci {
+        	server <RESTSERVER-0-INTERNAL-IP>;
+        	server <RESTSERVER-1-INTERNAL-IP>;
+		} 
+
+we also need to modify the ``location`` element from the ``server`` directive to proxy requests to the ``fibonacci`` upstream group that we just added:
+
+	.. parsed-literal::
+
+        location / {
+                proxy_pass http://fibonacci;
+        }
+
+
+After this changes, your file should look like the following example (the internal IP address most likely be different, of course)
+
+	TODO: insert default.conf
+
+
+Once you have finished editing the nginx configuration, we need to reload it.  Run the following command:
+
+	.. parsed-literal::
+		sudo service nginx reload
+
+If you encounter any errors, it is almost certain that there is a problem with your configuration file.  You can get valuable troubleshooting information by running this command:
+
+	.. parsed-literal::
+		sudo systemctl status nginx.service
+
+Once you have completed the configuration of the load balancer, we can test it by using the following curl command, from any computer:
+
+	.. parsed-literal::
+		curl -X POST -H 'Content-Type: application/json' http://<LOADBALANCER_IP_ADDRESS>/fibonacci -d '{"fibonacci_number": 20}'
+
+You should get a response.
+
+Our restserver includes an ``status`` endpoint that lets us see the size of an internal cache that uses to stored previously computed fibonacci numbers, and also the number of requests.  Run the following command several times:
+
+	.. parsed-literal::
+		curl http://<LOADBALANCER_IP_ADDRESS>/status
+
+Do you see different values? Explain why.
+
+
+On your own
+===========
+
+
+
+
+
+

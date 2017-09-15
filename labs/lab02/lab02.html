@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Lab No. 02: Scaling &#8212; CS385 Cloud Systems Architecture  documentation</title>
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="Lab No. 01: Deploying an Application to Google Cloud" href="../lab01/lab01.html" />
+<link href="https://fonts.googleapis.com/css?family=Lusitana|Inconsolata|Roboto" rel="stylesheet">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          CS385 Cloud Systems Architecture</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../syllabus.html">CS385 Cloud Systems Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lab01/lab01.html">Lab No. 01: Deploying an Application to Google Cloud</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Lab No. 02: Scaling</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Lab No. 02: Scaling</a><ul>
+<li><a class="reference internal" href="#deploy-a-simple-web-service">Deploy a Simple Web Service</a></li>
+<li><a class="reference internal" href="#measuring-your-instance-performance">Measuring your instance performance</a></li>
+<li><a class="reference internal" href="#adding-a-load-balancer">Adding a Load Balancer</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="../lab01/lab01.html" title="Previous Chapter: Lab No. 01: Deploying an Application to Google Cloud"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Lab No. 01: D...</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../../_sources/labs/lab02/lab02.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="lab-no-02-scaling">
+<h1>Lab No. 02: Scaling<a class="headerlink" href="#lab-no-02-scaling" title="Permalink to this headline">¶</a></h1>
+<p>In this lab we will deploy a simple Web Service, and we will scale it horizontally and vertically and measure different levels of performance.</p>
+<div class="section" id="deploy-a-simple-web-service">
+<h2>Deploy a Simple Web Service<a class="headerlink" href="#deploy-a-simple-web-service" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Deploy a new micro instance on google cloud platform. Select the same properties you used for the instances that we created during Lab No. 1 (micro instance, 0.6 GB memory, Ubuntu 16.04 LTS, standard persistent disk of 10 GB, HTTP/HTTPS traffic enabled.  Name this instance <cite>restserver-0</cite></p>
+</li>
+<li><p class="first">SSH into the instance.  Note: You might need to create a new set of ssh keys.</p>
+</li>
+<li><p class="first">We need to install the software dependencies to be able to run a REST API with the Flask framework.  Run the following sequence of commands in your instance</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
+<span class="o">&gt;&gt;</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">python</span><span class="o">-</span><span class="n">pip</span>
+<span class="o">&gt;&gt;</span> <span class="n">sudo</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">flask</span>
+<span class="o">&gt;&gt;</span> <span class="n">sudo</span> <span class="n">mkdir</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">restserver</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Create or copy a filled called <code class="docutils literal"><span class="pre">restserver.py</span></code> into the instance’s <code class="docutils literal"><span class="pre">/opt/restserver</span></code> directory with the following contents:</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Simple REST API that calculates fibonacci numbers and keeps a counter</span>
+<span class="sd">of the number of requests received</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">Response</span><span class="p">,</span> <span class="n">request</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">call_count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">fibonacci_numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/status&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">status</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">&#39;{{&quot;cache_length&quot;: </span><span class="si">{}</span><span class="s1">, &quot;requests&quot;: </span><span class="si">{}</span><span class="s1">}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">fibonacci_numbers</span><span class="p">),</span>
+        <span class="n">call_count</span><span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/fibonacci&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">,</span> <span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">fibonacci</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">call_count</span>
+    <span class="n">call_count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()[</span><span class="s1">&#39;fibonacci_number&#39;</span><span class="p">]))</span>
+    <span class="n">resp_content</span> <span class="o">=</span> <span class="s1">&#39;{{&quot;fibonacci_number&quot;: </span><span class="si">{}</span><span class="s1">, &quot;value&quot;: </span><span class="si">{}</span><span class="s1">}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">number</span><span class="p">,</span>
+        <span class="n">calc_fibonacci</span><span class="p">(</span><span class="n">number</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">resp_content</span><span class="p">,</span>
+                    <span class="n">status</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+                    <span class="n">mimetype</span><span class="o">=</span><span class="s2">&quot;application/json&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">calc_fibonacci</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates a fibonnaci numbers recursively</span>
+<span class="sd">    Does not handle calculations that exceed the</span>
+<span class="sd">    maximum recursion depth</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">number</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span>
+    <span class="k">if</span> <span class="n">number</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">fibonacci_numbers</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">fibonacci_numbers</span><span class="p">[</span><span class="n">number</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">calc_fibonacci</span><span class="p">(</span><span class="n">number</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">calc_fibonacci</span><span class="p">(</span><span class="n">number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">fibonacci_numbers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Start the service:</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">sudo</span> <span class="n">FLASK_APP</span><span class="o">=/</span><span class="n">opt</span><span class="o">/</span><span class="n">restserver</span><span class="o">/</span><span class="n">restserver</span><span class="o">.</span><span class="n">py</span> <span class="n">flask</span> <span class="n">run</span> <span class="o">--</span><span class="n">host</span><span class="o">=</span><span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span> <span class="o">--</span><span class="n">port</span><span class="o">=</span><span class="mi">80</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Test your service.  While on a terminal session on your workstation (i.e. not on your VM instance), type the following command (replace <code class="docutils literal"><span class="pre">&lt;YOUR_INSTANCE_ADDR&gt;</span></code> with the External IP Address of your instance):</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">curl</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="o">-</span><span class="n">H</span> <span class="s1">&#39;Content-Type: application/json&#39;</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">YOUR_INSTANCE_ADDR</span><span class="o">&gt;/</span><span class="n">fibonacci</span> <span class="o">-</span><span class="n">d</span> <span class="s1">&#39;{&quot;fibonacci_number&quot;: 20}&#39;</span>
+</pre></div>
+</div>
+<p>You should see the following output:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;fibonacci_number&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">6765</span><span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">We need to save the instance at its current state so we can easily make clones to scale the service horizontally.  To do this, first close your SSH session.  After you have logged out of your SSH session, go back to the Google Cloud Platform console, and from the VM instances dashboard, select your instance, and from the context menu on the right select <strong>Stop</strong>:</p>
+<blockquote>
+<div><img alt="../../_images/stop_instance.png" src="../../_images/stop_instance.png" />
+</div></blockquote>
+</li>
+<li><p class="first">To create an image, select <strong>Images</strong> from the left menu. Click on the <strong>[+] CREATE IMAGE</strong> link, and on the <strong>Create an image</strong> prompt enter “lab02-restserver” as Name and provide a Description of your preference. Leave <strong>Source</strong> as “Disk” and from source disk, select “restserver-0” (The instance that we created and stopped during this lab). Once all these options have been completed/selected, click on the <strong>Create</strong> button.  The creation of the image will take a few minutes.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="measuring-your-instance-performance">
+<h2>Measuring your instance performance<a class="headerlink" href="#measuring-your-instance-performance" title="Permalink to this headline">¶</a></h2>
+<p>To measure the performance of our web service we are going to use <em>ApacheBench</em>, also known as <code class="docutils literal"><span class="pre">ab</span></code>, a popular benchmarking tool (<a class="reference external" href="https://httpd.apache.org/docs/2.4/programs/ab.html">https://httpd.apache.org/docs/2.4/programs/ab.html</a>).</p>
+<ol class="arabic">
+<li><p class="first">Restart your instance, SSH into it and restart the Fibonacci REST API service we previously created. Note that your instance will probably be assigned a different External IP Address. This time we want to leave the service running in the background. Execute the following command to run the REST API server in the background (After this you can close the SSH session and the restserver will keep running in the background. Be aware that this does not mean that the REST server will autostart if you stop/start the instance.)</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">nohup</span> <span class="n">sudo</span> <span class="n">FLASK_APP</span><span class="o">=/</span><span class="n">opt</span><span class="o">/</span><span class="n">restserver</span><span class="o">/</span><span class="n">restserver</span><span class="o">.</span><span class="n">py</span> <span class="n">flask</span> <span class="n">run</span> <span class="o">--</span><span class="n">host</span><span class="o">=</span><span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span> <span class="o">--</span><span class="n">port</span><span class="o">=</span><span class="mi">80</span> <span class="o">&amp;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">We are now going to create an instance in which we will execute the benchmarks.  Deploy another micro instance on google cloud platform. Select micro instance, 0.6 GB memory, Ubuntu 16.04 LTS, standard persistent disk of 10 GB, and  <strong>HTTP/HTTPS traffic disabled</strong>.  Name this instance <cite>tester-0</cite></p>
+</li>
+<li><p class="first">SSH into the <cite>tester-0</cite> instance. Run the following sequence of commands to install <code class="docutils literal"><span class="pre">ab</span></code>:</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
+<span class="o">&gt;&gt;</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">apache2</span><span class="o">-</span><span class="n">utils</span> <span class="n">build</span><span class="o">-</span><span class="n">essential</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Create a file called <code class="docutils literal"><span class="pre">payload.json</span></code> with a single line with <code class="docutils literal"><span class="pre">{&quot;fibonacci_number&quot;:</span> <span class="pre">20}</span></code> as its content:</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">echo</span> <span class="s1">&#39;{&quot;fibonacci_number&quot;: 20}&#39;</span> <span class="o">&gt;</span> <span class="n">payload</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Run a test <code class="docutils literal"><span class="pre">ab</span></code> benchmark to verify installation (replace <code class="docutils literal"><span class="pre">&lt;REST_SERVER_EXT_IP&gt;</span></code> with the external IP address of the REST server):</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">ab</span> <span class="o">-</span><span class="n">p</span> <span class="n">payload</span><span class="o">.</span><span class="n">json</span> <span class="o">-</span><span class="n">T</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span> <span class="o">-</span><span class="n">m</span> <span class="n">POST</span> <span class="o">-</span><span class="n">c</span> <span class="mi">10</span> <span class="o">-</span><span class="n">n</span> <span class="mi">10</span> <span class="o">-</span><span class="n">s</span> <span class="mi">10</span> <span class="o">-</span><span class="n">r</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">REST_SERVER_EXT_IP</span><span class="o">&gt;/</span><span class="n">fibonacci</span>
+</pre></div>
+</div>
+<p>The command should produce an output similar to this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>This is ApacheBench, Version 2.3 &lt;$Revision: 1706008 $&gt;
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 35.188.78.135 (be patient).....done
+
+
+Server Software:        nginx/1.10.3
+Server Hostname:        35.188.78.135
+Server Port:            80
+
+Document Path:          /fibonacci
+Document Length:        246 bytes
+
+Concurrency Level:      10
+Time taken for tests:   0.073 seconds
+Complete requests:      10
+Failed requests:        0
+Total transferred:      4050 bytes
+Total body sent:        1700
+HTML transferred:       2460 bytes
+Requests per second:    137.58 [#/sec] (mean)
+Time per request:       72.687 [ms] (mean)
+Time per request:       7.269 [ms] (mean, across all concurrent requests)
+Transfer rate:          54.41 [Kbytes/sec] received
+                        22.84 kb/s sent
+                        77.25 kb/s total
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        1    1   0.1      1       2
+Processing:     3   14  20.3      8      71
+Waiting:        3   14  20.3      8      71
+Total:          5   15  20.3      9      73
+
+Percentage of the requests served within a certain time (ms)
+  50%      9
+  66%     10
+  75%     10
+  80%     10
+  90%     73
+  95%     73
+  98%     73
+  99%     73
+ 100%     73 (longest request)
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Since we are going to run our benchmarks with high concurrency levels, we need to increment the maximum number of open files.  Run the following command (Note: this is not a persistent change, and you will need to run this command again if you log out or reboot the <code class="docutils literal"><span class="pre">tester-0</span></code>)</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">ulimit</span> <span class="o">-</span><span class="n">n</span> <span class="mi">10000</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">In the <code class="docutils literal"><span class="pre">ab</span></code> benchmark that we run before, the <code class="docutils literal"><span class="pre">-c</span></code> option is used to simulate a given number of simultaneous connections (10 in that case),  the <code class="docutils literal"><span class="pre">-n</span></code> option is used to determine the number of requests to issue(10 requests in the example). Experiment running <code class="docutils literal"><span class="pre">ab</span></code> with different concurrency levels, in batches of 10000 requests.  Fill out the following table:</p>
+</li>
+</ol>
+<table border="1" class="minitable docutils">
+<colgroup>
+<col width="21%" />
+<col width="35%" />
+<col width="24%" />
+<col width="21%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Concurrency</th>
+<th class="head">Mean Request Time (ms)</th>
+<th class="head">Longest request</th>
+<th class="head">98 percentile</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>10</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>20</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>50</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>100</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>200</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>500</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>700</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>1000</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>1200</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>1500</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>2000</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>2500</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>3000</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Apparently <code class="docutils literal"><span class="pre">ab</span></code> has a bug where if one of the requests times out, it exits with the message <code class="docutils literal"><span class="pre">apr_pollset_poll:</span> <span class="pre">The</span> <span class="pre">timeout</span> <span class="pre">specified</span> <span class="pre">has</span> <span class="pre">expired</span> <span class="pre">(70007)</span></code>, instead of recording it as a failed request. If you run into this problem try to run the test again. You will probably have this problem once you go over 1000 concurrent users in a single node.</p>
+</div>
+<div class="worksheet admonition">
+<p class="first admonition-title">Report</p>
+<p class="last">If we want to have a Service Level Agreement in which we tolerate a maximum response time up to 1.5 seconds, with an average request time less than 200 ms, with a response 98% of the time within 300 ms, what is the maximum number of concurrent users that we can support with only one server. Use one or more charts based on the data collected on the previous table to substantiate your answer.</p>
+</div>
+</div>
+<div class="section" id="adding-a-load-balancer">
+<h2>Adding a Load Balancer<a class="headerlink" href="#adding-a-load-balancer" title="Permalink to this headline">¶</a></h2>
+<p>In this section we are going to scale the restserver horizontally with the help of a load balancer.</p>
+<ol class="arabic">
+<li><p class="first">Create another instance based on the “lab02-restserver” image. Name this instance “restserver-1”, and make sure that you enable HTTP/HTTPS traffic.</p>
+</li>
+<li><p class="first">Start the restserver in “restserver-1” (in the background, as we did before) and make sure that it works (use the Internal IP Address for your test). At this point we have two instances running with the restserver. However, we need to add a load balancer in front of them in order to distribute the request load between the instances.</p>
+</li>
+<li><p class="first">We will use <strong>nginx</strong> as our load balancer. Create another microinstance (with the same specs as restserver).  Name this instance “loadbalancer-0”.</p>
+</li>
+<li><p class="first">SSH into “loadbalancer-0” and execute the following commands to install <strong>nginx</strong> and its software dependencies:</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
+<span class="o">&gt;&gt;</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">nginx</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>nginx</strong> accepts a maximum of 768 worker connections by default.  We need to increase that number for our testing. Make a backup of the <code class="docutils literal"><span class="pre">/etc/nginx/nginx.conf</span></code> file and modify the <code class="docutils literal"><span class="pre">worker_connections</span></code> parameter under the <code class="docutils literal"><span class="pre">events</span></code> directive to allow 4096 worker connections.</p>
+</li>
+<li><p class="first">We also need to update the maximum number of open files.  We want to apply this to the nginx service only. Run the following commands:</p>
+<blockquote>
+<div><pre class="literal-block">
+&gt;&gt; sudo mkdir /etc/systemd/system/nginx.service.d
+&gt;&gt; sudo bash -c 'echo -e &quot;[Service]nLimitNOFILE=65536&quot; &gt; /etc/systemd/system/nginx.service.d/local.conf'
+&gt;&gt; sudo systemctl daemon-reload
+&gt;&gt; sudo systemctl restart nginx
+</pre>
+</div></blockquote>
+</li>
+<li><p class="first">You can verify that the previous setting took effect by looking at the limits for the process id for <strong>nginx</strong> (you can find the value of <code class="docutils literal"><span class="pre">&lt;PID&gt;</span></code> using <code class="docutils literal"><span class="pre">ps</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">nginx</span></code>):</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">cat</span> <span class="o">/</span><span class="n">proc</span><span class="o">/&lt;</span><span class="n">PID</span><span class="o">&gt;/</span><span class="n">limits</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">We now need to configure <strong>nginx</strong> to serve incoming requests to <code class="docutils literal"><span class="pre">/fibonacci</span></code> and forward them to the <strong>restserver</strong> nodes in a round robin fashion. To do this, we will edit the configuration file located under: <code class="docutils literal"><span class="pre">/etc/nginx/sites-available/default</span></code>, but before making any changes to that file we should make a backup</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">sudo</span> <span class="n">cp</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">sites</span><span class="o">-</span><span class="n">available</span><span class="o">/</span><span class="n">default</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">sites</span><span class="o">-</span><span class="n">available</span><span class="o">/</span><span class="n">default</span><span class="o">.</span><span class="n">backup</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Open this file and notice that it has a json-like format.  To enable load balancing, we need to use the <code class="docutils literal"><span class="pre">upstream</span></code> directive.  Add this to the file</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">upstream</span> <span class="n">fibonacci</span> <span class="p">{</span>
+    <span class="n">server</span> <span class="o">&lt;</span><span class="n">RESTSERVER</span><span class="o">-</span><span class="mi">0</span><span class="o">-</span><span class="n">INTERNAL</span><span class="o">-</span><span class="n">IP</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="n">server</span> <span class="o">&lt;</span><span class="n">RESTSERVER</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">INTERNAL</span><span class="o">-</span><span class="n">IP</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">We also need to modify the <code class="docutils literal"><span class="pre">location</span></code> element from the <code class="docutils literal"><span class="pre">server</span></code> directive to proxy requests to the <code class="docutils literal"><span class="pre">fibonacci</span></code> upstream group that we just added:</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+    <span class="n">proxy_pass</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">fibonacci</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">After these changes have been applied, your file should look like the following example (the internal IP address most likely be different, of course)</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># ... lots of comments</span>
+
+<span class="c1"># Default server configuration</span>
+<span class="c1">#</span>
+<span class="n">upstream</span> <span class="n">fibonacci</span> <span class="p">{</span>
+	<span class="n">server</span> <span class="mf">10.138</span><span class="o">.</span><span class="mf">0.3</span><span class="p">;</span>
+	<span class="n">server</span> <span class="mf">10.128</span><span class="o">.</span><span class="mf">0.3</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">server</span> <span class="p">{</span>
+	<span class="n">listen</span> <span class="mi">80</span> <span class="n">default_server</span><span class="p">;</span>
+	<span class="n">listen</span> <span class="p">[::]:</span><span class="mi">80</span> <span class="n">default_server</span><span class="p">;</span>
+
+	<span class="c1"># .. more comments </span>
+
+	<span class="n">root</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="p">;</span>
+
+	<span class="c1"># Add index.php to the list if you are using PHP</span>
+	<span class="n">index</span> <span class="n">index</span><span class="o">.</span><span class="n">html</span> <span class="n">index</span><span class="o">.</span><span class="n">htm</span> <span class="n">index</span><span class="o">.</span><span class="n">nginx</span><span class="o">-</span><span class="n">debian</span><span class="o">.</span><span class="n">html</span><span class="p">;</span>
+
+	<span class="n">server_name</span> <span class="n">_</span><span class="p">;</span>
+
+
+	<span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+		<span class="n">proxy_pass</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">fibonacci</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="c1"># ... more comments</span>
+<span class="p">}</span>
+
+<span class="c1">#  more comments at the end</span>
+
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Once you have finished editing the <strong>nginx</strong> configuration, we need to reload it.  Run the following command:</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">sudo</span> <span class="n">service</span> <span class="n">nginx</span> <span class="n">reload</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">If you encounter any errors, it is almost certain that there is a problem with your configuration file.  You can get valuable troubleshooting information by running this command:</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">status</span> <span class="n">nginx</span><span class="o">.</span><span class="n">service</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Once you have completed the configuration of the load balancer, we can test it by using the following curl command, from any computer. Try it from “tester-0” using both Internal and External IP addresses of “loadbalancer-0”.  Try it from the outside work (a.k.a. your workstation) using the External IP Address.</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">curl</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="o">-</span><span class="n">H</span> <span class="s1">&#39;Content-Type: application/json&#39;</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">LOADBALANCER_IP_ADDRESS</span><span class="o">&gt;/</span><span class="n">fibonacci</span> <span class="o">-</span><span class="n">d</span> <span class="s1">&#39;{&quot;fibonacci_number&quot;: 20}&#39;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Our restserver includes an <code class="docutils literal"><span class="pre">status</span></code> endpoint that lets us see the size of an internal cache that holds previously computed fibonacci numbers, and also the number of requests.  Run the following command several times, and notice if you see different output every time:</p>
+<blockquote>
+<div><div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">LOADBALANCER_IP_ADDRESS</span><span class="o">&gt;/</span><span class="n">status</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+<div class="worksheet admonition">
+<p class="first admonition-title">Report</p>
+<ol class="last arabic simple">
+<li>Complete a table similar to the table we completed in the previous section, but in this case include data for 2 nodes.</li>
+<li>Repeat the previous step with 3, 4 and 5 nodes. Note that you will need to provision the new restserver VM instances, start the restserver process on them, update the nginx configuration with the internal IP addresses and reload nginx.</li>
+<li>Generate a single chart that plots the mean request time vs concurrent users, for the 1,2 3,4 and 5 node configurations.</li>
+<li>We expect our service to have a maximum number of 2000 concurrent users.  With a Service Level Agreement in which we tolerate a maximum response time up to 1 second, with an average of less than 300 milliseconds, with requests 98% of the time less than 400 ms, How many nodes do you need to provision?</li>
+</ol>
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
