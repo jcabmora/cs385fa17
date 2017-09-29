@@ -254,5 +254,5 @@ In this section we are going to scale the restserver horizontally with the help 
 
     #. Generate a single chart that plots the mean request time vs concurrent users, for the 1,2 3,4 and 5 node configurations.
 
-    #. We expect our service to have a maximum number of 2000 concurrent users.  With a Service Level Agreement in which we tolerate a maximum response time up to 1 second, with an average of less than 300 milliseconds, with requests 98% of the time less than 400 ms, How many nodes do you need to provision? 
+    #. We expect our service to have a maximum number of 2000 concurrent users.  With a Service Level Agreement in which we tolerate a maximum response time up to 1.5 seconds, with an average of less than 300 milliseconds, with requests 98% of the time less than 400 ms, How many nodes do you need to provision? 
 

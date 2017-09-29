@@ -188,8 +188,12 @@ Example to use application credentials: https://developers.google.com/identity/p
 
 Google Cloud Python API Client: https://developers.google.com/api-client-library/python/
 
+Google Cloud Python Tutorial: https://cloud.google.com/compute/docs/tutorials/python-guide
+
 Compute Engine Python API: https://developers.google.com/resources/api-libraries/documentation/compute/v1/python/latest/
 
 Google Cloud python package: https://googlecloudplatform.github.io/google-cloud-python/
 
 Markdown Tutorial: https://guides.github.com/features/mastering-markdown/
+
+
