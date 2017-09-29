@@ -1,0 +1,12 @@
+Identify which of the following services need to mantain state.  Explain why or why not.
+
+1) An ecommerce site
+
+2) A bulleting board (a la Craigslist)
+
+3) A REST API that returns the current temperature in different locations around the world.
+
+4) The Internet Chuck Norris Database
+
+5) A blog
+
