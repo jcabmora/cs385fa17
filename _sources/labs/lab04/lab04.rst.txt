@@ -51,7 +51,7 @@ We are going to use `Apache Kafka <https://kafka.apache.org/>`_ as a message bro
 
         RUN apt-get update
         RUN apt-get install -y jq
-        RUN wget -O - $(wget -qO- https://www.apache.org/dyn/closer.cgi\?as_json\=1\&path\=/kafka/$KAFKA_VERSION/$KAFKA_ARCH | jq --raw-output '.preferred')kafka/$KAFKA_VERSION/$KAFKA_ARCH | tar zxf -
+        RUN wget -O - $(wget -qO- https://www.apache.org/dyn/closer.cgi\\?as_json\\=1\\&path\\=/kafka/$KAFKA_VERSION/$KAFKA_ARCH | jq --raw-output '.preferred')kafka/$KAFKA_VERSION/$KAFKA_ARCH | tar zxf -
         RUN mv /opt/kafka_$KAFKA_SCALA_VERSION-$KAFKA_VERSION $KAFKA_HOME
         RUN sed -i 's/zookeeper.connect=localhost:2181/zookeeper.connect=zookeeper:2181/g' /opt/kafka/config/server.properties
         RUN sed -i 's/broker.id=0/broker.id=-1/g' /opt/kafka/config/server.properties
@@ -349,7 +349,7 @@ In this section, we are going to create a very simple chat application (all sour
 
     .. parsed-literal::
         from flask import Flask, render_template, session, request
-        from flask_socketio import SocketIO, emit, join_room, leave_room, \
+        from flask_socketio import SocketIO, emit, join_room, leave_room, \\
             close_room, rooms, disconnect
 
         async_mode = None
@@ -420,7 +420,7 @@ In this section, we are going to create a very simple chat application (all sour
                     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
 
                     socket.on('connect', function() {
-                        socket.emit('my_event', {data: 'I\'m connected!'});
+                        socket.emit('my_event', {data: 'I\\'m connected!'});
                     });
 
                     socket.on('my_response', function(msg) {
@@ -473,7 +473,7 @@ In this section, we are going to create a very simple chat application (all sour
 
         WORKDIR /opt/chatserver
 
-        RUN apk add --no-cache g++ \
+        RUN apk add --no-cache g++ \\
             && pip install -r requirements.txt
 
         ENV FLASK_APP app.py
